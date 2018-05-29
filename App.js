@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Main from "./src/Main";
 
 export default class App extends React.Component {
@@ -15,7 +15,7 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#1b3039',
     alignItems: 'center',
     justifyContent: 'center',
   },

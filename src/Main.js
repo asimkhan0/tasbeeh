@@ -3,42 +3,55 @@ import {View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  TouchableHighlight,
-  FlatList,Modal
+  FlatList,
+  BackHandler
 } from 'react-native'
-
 import Prompt from './Prompt/Prompt'
+import Counter from "./Counter";
 
 export default class Main extends Component {
   state={
     promptVisible :false,
-    tasbeehTypes: [
-    
-    ]
+    tasbeehTypes: []
+  };
+  
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid())
   }
-
-  _keyExtractor = (item, index) => item.Ttype;
+  backAndroid = () =>{
+    this.setState({opened:{}});
+    return true
+  };
+  _keyExtractor = (item, index) => item.name;
   
   gotoAnyTasbeeh = () => {
-    console.log( `Any clicked ` );
+    this.setState({opened:{name:'random1x'}})
   };
-  listClickHandler = () =>{
-    console.log( `list clicked ` );
+  
+  listClickHandler = (value) =>{
+    this.setState({opened:value})
   };
+  
   addTypeModal = () =>{
     this.setModalVisible(true)
-    console.log( `Add modal clicked ` );
   };
   setModalVisible(visible) {
-    this.setState({promptVisible : visible});
+    this.setState({promptVisible : visible})
   }
   onAdd = (value) => {
-    this.setState({tasbeehTypes: [...this.state.tasbeehTypes,{Ttype:value}], promptVisible: false})
-  }
+    this.setState(
+      {tasbeehTypes: [...this.state.tasbeehTypes,{
+        name:value,count:0}],promptVisible: false})
+  };
   onDelete = () => {
     //TODO: should be implemented.
-  }
-  render() {
+  };
+  
+  
+  renderSplashScreen= () => {
+  
+  };
+  renderListView = () => {
     return(
       <View style={styles.mainContainer}>
         <View style={styles.anyTasbeehContainer}>
@@ -49,15 +62,15 @@ export default class Main extends Component {
             <Text style={styles.buttonText}>Any Tasbeeh</Text>
           </TouchableOpacity>
         </View>
-        
+      
         <View style={styles.scrollerContainer}>
           <FlatList
             data={this.state.tasbeehTypes}
             renderItem={({item}) => {
               return (
                 <TouchableOpacity
-                  onPress={this.listClickHandler}>
-                  <Text style={styles.listItems}>{item.Ttype}</Text>
+                  onPress={() => this.listClickHandler(item)}>
+                  <Text style={styles.listItems}>{item.name}</Text>
                 </TouchableOpacity>
               ) }
             }
@@ -71,20 +84,31 @@ export default class Main extends Component {
             <Text style={styles.buttonText}>Add New Tasbeeh</Text>
           </TouchableOpacity>
         </View>
-        
-        
+      
+      
         <Prompt
-          title="Say something"
-          placeholder="Start typing"
-          defaultValue="Hello"
+          title="Add New Tasbeeh"
+          placeholder="Tasbeeh Name"
+          defaultValue=""
           visible={this.state.promptVisible}
           onCancel={() => this.setState({ promptVisible: false})}
           onSubmit={(value) => this.onAdd(value)}/>
-      
-      
-      
+    
+    
+    
       </View>
     )
+  };
+  renderCounterView = (value) => {
+    if(!value) return <Counter />;
+    return <Counter config={value}/>
+  };
+  
+  render() {
+    let state = this.state;
+    {return state.opened.name === 'random1x'? this.renderCounterView() : state.opened.name != null? this.renderCounterView(this.state.opened) :
+      this.renderListView();
+    }
   }
 }
 
@@ -105,8 +129,6 @@ const styles = StyleSheet.create({
     flex:1
   },
   button:{
-    // width:330,
-    
     backgroundColor: 'green',
     paddingVertical:25,
     alignItems: 'center'
