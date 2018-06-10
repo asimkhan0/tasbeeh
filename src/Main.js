@@ -1,18 +1,21 @@
-import React, {Component} from 'react'
+import React, {Component} from 'react';
 import {View,
   Text,
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  BackHandler
+  BackHandler,
+  AsyncStorage
 } from 'react-native'
-import Prompt from './Prompt/Prompt'
+import Prompt from './Prompt/Prompt';
 import Counter from "./Counter";
+
 
 export default class Main extends Component {
   state={
     promptVisible :false,
-    tasbeehTypes: []
+    tasbeehTypes: [],
+    opened:{}
   };
   
   componentDidMount() {
@@ -47,7 +50,10 @@ export default class Main extends Component {
     //TODO: should be implemented.
   };
   
-  
+  onCounterChange = (count) => {
+    const index = this.state.tasbeehTypes.findIndex((item) => item.name === this.state.opened.name)
+    this.state.tasbeehTypes[index].count = count;
+  }
   renderSplashScreen= () => {
   
   };
@@ -100,8 +106,8 @@ export default class Main extends Component {
     )
   };
   renderCounterView = (value) => {
-    if(!value) return <Counter />;
-    return <Counter config={value}/>
+    if(!value) return <Counter onCounterChange={this.onCounterChange}/>;
+    return <Counter config={value} onCounterChange={this.onCounterChange}/>;
   };
   
   render() {
